@@ -35,7 +35,13 @@ export interface IMovement {
 }
 
 export abstract class BaseMovement extends BaseAction {
-  modes = [ModeName.Normal, ModeName.Visual, ModeName.VisualLine, ModeName.VisualBlock];
+  modes = [
+    ModeName.Normal,
+    ModeName.KakNormal,
+    ModeName.Visual,
+    ModeName.VisualLine,
+    ModeName.VisualBlock,
+  ];
 
   isMotion = true;
 

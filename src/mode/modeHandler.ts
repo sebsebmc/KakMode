@@ -50,7 +50,7 @@ export class ModeHandler implements vscode.Disposable {
   public static async Create(textEditor = vscode.window.activeTextEditor!): Promise<ModeHandler> {
     const modeHandler = new ModeHandler(textEditor);
     await modeHandler.setCurrentMode(
-      configuration.startInInsertMode ? ModeName.Insert : ModeName.Normal
+      configuration.startInInsertMode ? ModeName.Insert : ModeName.KakNormal
     );
     modeHandler.syncCursors();
     return modeHandler;
@@ -60,6 +60,8 @@ export class ModeHandler implements vscode.Disposable {
     this._remappers = new Remappers();
     this._modes = [
       new modes.NormalMode(),
+      new modes.KakNormalMode(),
+      new modes.KakInsertMode(),
       new modes.InsertMode(),
       new modes.VisualMode(),
       new modes.VisualBlockMode(),
@@ -175,7 +177,7 @@ export class ModeHandler implements vscode.Disposable {
           newPosition = newPosition.withColumn(Math.max(newPosition.getLineEnd().character - 1, 0));
 
           // Switch back to normal mode since it was a click not a selection
-          await this.setCurrentMode(ModeName.Normal);
+          await this.setCurrentMode(ModeName.KakNormal);
 
           toDraw = true;
         }
@@ -225,7 +227,7 @@ export class ModeHandler implements vscode.Disposable {
           // double click mouse selection causes an extra character to be selected so take one less character
         }
       } else if (this.vimState.currentMode !== ModeName.Insert) {
-        await this.setCurrentMode(ModeName.Normal);
+        await this.setCurrentMode(ModeName.KakNormal);
       }
 
       return this.updateView(this.vimState, { drawSelection: toDraw, revealRange: true });

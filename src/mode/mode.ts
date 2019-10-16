@@ -3,6 +3,8 @@ import { VimState } from '../state/vimState';
 
 export enum ModeName {
   Normal,
+  KakNormal,
+  KakInsert,
   Insert,
   Visual,
   VisualBlock,

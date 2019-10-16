@@ -832,6 +832,34 @@ export class CommandInsertAtCursor extends BaseCommand {
 }
 
 @RegisterAction
+export class CommandKakInsertAtCursor extends BaseCommand {
+  modes = [ModeName.KakNormal];
+  keys = ['i'];
+
+  public async exec(position: Position, vimState: VimState): Promise<VimState> {
+    await vimState.setCurrentMode(ModeName.KakInsert);
+    return vimState;
+  }
+
+  public doesActionApply(vimState: VimState, keysPressed: string[]): boolean {
+    // Only allow this command to be prefixed with a count or nothing, no other
+    // actions or operators before
+    let previousActionsNumbers = true;
+    for (const prevAction of vimState.recordedState.actionsRun) {
+      if (!(prevAction instanceof CommandNumber)) {
+        previousActionsNumbers = false;
+        break;
+      }
+    }
+
+    if (vimState.recordedState.actionsRun.length === 0 || previousActionsNumbers) {
+      return super.couldActionApply(vimState, keysPressed);
+    }
+    return false;
+  }
+}
+
+@RegisterAction
 class CommandReplaceAtCursorFromNormalMode extends BaseCommand {
   modes = [ModeName.Normal];
   keys = ['R'];

@@ -1,3 +1,8 @@
+# This is a fork of VSCodeVim to create a Kakoune mode/keybindings for core Kakoune commands
+
+I really enjoy the editing paradigms of [Kakoune](https://github.com/mawww/kakoune) and so I want to try and provide as much of its editing
+design to VS Code. I will try and log progress in porting core Kakoune features in the [Kakoune TODO](TODO-kakoune.md) file.
+
 <h2 align="center"><img src="https://raw.githubusercontent.com/VSCodeVim/Vim/master/images/icon.png" height="128"><br>VSCodeVim</h2>
 <p align="center"><strong>Vim emulation for Visual Studio Code</strong></p>
 

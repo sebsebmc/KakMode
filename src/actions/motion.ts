@@ -36,7 +36,7 @@ export abstract class ExpandingSelection extends BaseMovement {
 }
 
 abstract class MoveByScreenLine extends BaseMovement {
-  modes = [ModeName.Normal, ModeName.Visual, ModeName.VisualLine];
+  modes = [ModeName.Normal, ModeName.KakNormal, ModeName.Visual, ModeName.VisualLine];
   movementType: CursorMovePosition;
   by: CursorMoveByUnit;
   value: number = 1;

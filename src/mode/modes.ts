@@ -34,6 +34,29 @@ export class InsertMode extends Mode {
   }
 }
 
+export class KakNormalMode extends Mode {
+  constructor() {
+    super(ModeName.KakNormal, '-- KakNormal --', VSCodeVimCursorType.Block, true);
+  }
+
+  getStatusBarCommandText(vimState: VimState): string {
+    const cmd = vimState.recordedState.commandString;
+
+    // Don't show the `v` that brings you into visual mode
+    return cmd.length === 0 || cmd[0] === 'v' ? cmd.slice(1) : cmd;
+  }
+}
+
+export class KakInsertMode extends Mode {
+  constructor() {
+    super(ModeName.KakInsert, '-- KakInsert --', VSCodeVimCursorType.Native);
+  }
+
+  getStatusBarCommandText(vimState: VimState): string {
+    return '';
+  }
+}
+
 export class VisualMode extends Mode {
   constructor() {
     super(ModeName.Visual, '-- Visual --', VSCodeVimCursorType.TextDecoration, true);
