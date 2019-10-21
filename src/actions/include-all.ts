@@ -1,11 +1,13 @@
 import './base';
 import './operator';
 import './motion';
+import './kakMotion';
 import './textobject';
 
 // commands
 import './commands/insert';
 import './commands/actions';
+import './commands/kaknormal';
 
 // plugin
 import './plugins/camelCaseMotion';

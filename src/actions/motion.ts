@@ -217,6 +217,29 @@ class MoveDown extends BaseMovement {
   doesntChangeDesiredColumn = true;
 
   public async execAction(position: Position, vimState: VimState): Promise<Position | IMovement> {
+    let pos;
+    if (configuration.foldfix && vimState.currentMode !== ModeName.VisualBlock) {
+      pos = new MoveDownFoldFix().execAction(position, vimState);
+    } else {
+      pos = position.getDown(vimState.desiredColumn);
+    }
+    vimState.cursorStartPosition = pos;
+    return pos;
+  }
+
+  public async execActionForOperator(position: Position, vimState: VimState): Promise<Position> {
+    vimState.currentRegisterMode = RegisterMode.LineWise;
+    return position.getDown(position.getLineEnd().character);
+  }
+}
+
+@RegisterAction
+class MoveDownExtend extends BaseMovement {
+  modes = [ModeName.KakNormal];
+  keys = ['J'];
+  doesntChangeDesiredColumn = true;
+
+  public async execAction(position: Position, vimState: VimState): Promise<Position | IMovement> {
     if (configuration.foldfix && vimState.currentMode !== ModeName.VisualBlock) {
       return new MoveDownFoldFix().execAction(position, vimState);
     }
@@ -235,8 +258,36 @@ class MoveDownArrow extends MoveDown {
 }
 
 @RegisterAction
+class MoveDownArrowExtend extends MoveDownExtend {
+  keys = ['<shift+down>'];
+}
+
+@RegisterAction
 class MoveUp extends BaseMovement {
   keys = ['k'];
+  doesntChangeDesiredColumn = true;
+
+  public async execAction(position: Position, vimState: VimState): Promise<Position | IMovement> {
+    let pos;
+    if (configuration.foldfix && vimState.currentMode !== ModeName.VisualBlock) {
+      pos = new MoveUpFoldFix().execAction(position, vimState);
+    } else {
+      pos = position.getUp(vimState.desiredColumn);
+    }
+    vimState.cursorStartPosition = pos;
+    return pos;
+  }
+
+  public async execActionForOperator(position: Position, vimState: VimState): Promise<Position> {
+    vimState.currentRegisterMode = RegisterMode.LineWise;
+    return position.getUp(position.getLineEnd().character);
+  }
+}
+
+@RegisterAction
+class MoveUpExtend extends BaseMovement {
+  modes = [ModeName.KakNormal];
+  keys = ['K'];
   doesntChangeDesiredColumn = true;
 
   public async execAction(position: Position, vimState: VimState): Promise<Position | IMovement> {
@@ -281,6 +332,11 @@ class MoveUpFoldFix extends MoveByScreenLineMaintainDesiredColumn {
 @RegisterAction
 class MoveUpArrow extends MoveUp {
   keys = ['<up>'];
+}
+
+@RegisterAction
+class MoveUpArrowExtend extends MoveUpExtend {
+  keys = ['<shift+up>'];
 }
 
 @RegisterAction
@@ -424,16 +480,39 @@ export class MoveLeft extends BaseMovement {
 
   public async execAction(position: Position, vimState: VimState): Promise<Position> {
     if (shouldWrapKey(vimState, this.keysPressed)) {
-      return position.getLeftThroughLineBreaks();
+      let pos = position.getLeftThroughLineBreaks();
+      vimState.cursorStartPosition = pos;
+      return pos;
     }
     return position.getLeft();
   }
 }
 
 @RegisterAction
+export class MoveLeftExtend extends BaseMovement {
+  modes = [ModeName.KakNormal];
+  keys = ['H'];
+
+  public async execAction(position: Position, vimState: VimState): Promise<Position> {
+    return position.getLeftThroughLineBreaks(true);
+  }
+}
+
+@RegisterAction
 class MoveLeftArrow extends MoveLeft {
-  modes = [ModeName.Normal, ModeName.Visual, ModeName.VisualLine, ModeName.VisualBlock];
+  modes = [
+    ModeName.Normal,
+    ModeName.KakNormal,
+    ModeName.Visual,
+    ModeName.VisualLine,
+    ModeName.VisualBlock,
+  ];
   keys = ['<left>'];
+}
+
+@RegisterAction
+class MoveLeftArrowExtend extends MoveLeftExtend {
+  keys = ['<shift+left>'];
 }
 
 @RegisterAction
@@ -464,16 +543,34 @@ class MoveRight extends BaseMovement {
 
   public async execAction(position: Position, vimState: VimState): Promise<Position> {
     if (shouldWrapKey(vimState, this.keysPressed)) {
-      const includeEol = vimState.currentMode === ModeName.Insert;
-      return position.getRightThroughLineBreaks(includeEol);
+      const includeEol =
+        vimState.currentMode === ModeName.Insert || vimState.currentMode === ModeName.KakNormal;
+      const pos = position.getRightThroughLineBreaks(includeEol);
+      vimState.cursorStartPosition = pos;
+      return pos;
     }
     return position.getRight();
   }
 }
 
 @RegisterAction
+class MoveRightExtend extends BaseMovement {
+  modes = [ModeName.KakNormal];
+  keys = ['L'];
+
+  public async execAction(position: Position, vimState: VimState): Promise<Position> {
+    return position.getRightThroughLineBreaks(true);
+  }
+}
+
+@RegisterAction
 class MoveRightArrow extends MoveRight {
   modes = [ModeName.Normal, ModeName.Visual, ModeName.VisualLine, ModeName.VisualBlock];
+  keys = ['<right>'];
+}
+
+@RegisterAction
+class MoveRightArrowExtend extends MoveRightExtend {
   keys = ['<right>'];
 }
 
@@ -948,6 +1045,7 @@ class MoveScreenToLeftHalf extends MoveByScreenLine {
 
 @RegisterAction
 class MoveToLineFromViewPortTop extends MoveByScreenLine {
+  modes = [];
   keys = ['H'];
   movementType: CursorMovePosition = 'viewPortTop';
   by: CursorMoveByUnit = 'line';
@@ -966,6 +1064,7 @@ class MoveToLineFromViewPortTop extends MoveByScreenLine {
 
 @RegisterAction
 class MoveToLineFromViewPortBottom extends MoveByScreenLine {
+  modes = [];
   keys = ['L'];
   movementType: CursorMovePosition = 'viewPortBottom';
   by: CursorMoveByUnit = 'line';
@@ -1069,6 +1168,8 @@ class MoveNonBlankLast extends BaseMovement {
 
 @RegisterAction
 export class MoveWordBegin extends BaseMovement {
+  // TODO: Remove actions that were 'disabled' this way
+  modes = [];
   keys = ['w'];
 
   public async execAction(
@@ -1308,6 +1409,7 @@ class MovePreviousSectionEnd extends MoveSectionBoundary {
 
 @RegisterAction
 class MoveToMatchingBracket extends BaseMovement {
+  modes = [];
   keys = ['%'];
   isJump = true;
 
