@@ -45,19 +45,19 @@ selection's cursor. Some additional keys are recognised in insert mode:
 
 ## Movement
 
-See <<Appending>> below for instructions on extending (appending to) the current selection, in order to select more text in multiple steps.
+See [Appending](#Appending) below for instructions on extending (appending to) the current selection, in order to select more text in multiple steps.
 
 - [x] `h`: select the character on the left of selection end
 - [x] `j`: select the character below the selection end
 - [x] `k`: select the character above the selection end
 - [x] `l`: select the character on the right of selection end
 
-- [ ] `w`: select the word and following whitespaces on the right of selection end
-- [ ] `b`: select preceding whitespaces and the word on the left of selection end
-- [ ] `e`: select preceding whitespaces and the word on the right of selection end
+- [x] `w`: select the word and following whitespaces on the right of selection end (see TODO)
+- [x] `b`: select preceding whitespaces and the word on the left of selection end (see TODO)
+- [x] `e`: select preceding whitespaces and the word on the right of selection end (see TODO)
 - [ ] `<a-[wbe]>`: same as [wbe] but select WORD instead of word
 
-- [ ] `f`: select to (including) the next occurrence of the given character
+- [ ] `f`: select to (including) the next occurrence of the given character (TODO: should wrap past lines)
 - [ ] `t`: select until (excluding) the next occurrence of the given character
 - [ ] `<a-[ft]>`: same as [ft] but in the other direction
 
@@ -66,7 +66,7 @@ See <<Appending>> below for instructions on extending (appending to) the current
 
 - [x] `x`: select line on which selection end lies (or next line when end lies on
       an end-of-line)
-- [ ] `X`: similar to `x`, except the current selection is extended
+- [x] `X`: similar to `x`, except the current selection is extended
 - [ ] `<a-x>`: expand selections to contain full lines (including end-of-lines)
 - [ ] `<a-X>`: trim selections to only contain full lines (not including last
       end-of-line)
@@ -93,7 +93,7 @@ See <<Appending>> below for instructions on extending (appending to) the current
 - [ ] `)`: rotate selections (the main selection becomes the next one)
 - [ ] `(`: rotate selections backwards
 
-- [ ] `;`: reduce selections to their cursor
+- [x] `;`: reduce selections to their cursor
 - [ ] `<a-;>`: flip the selections' direction
 - [ ] `<a-:>`: ensure selections are in forward direction (cursor after anchor)
 
@@ -106,7 +106,7 @@ sequence of non whitespace characters.
 
 ## Appending
 
-For most <<Movement>> commands, using `Shift` extends the current selection
+For most [Movement](#Movement) commands, using `Shift` extends the current selection
 instead of replacing it.
 
 Examples:
@@ -185,46 +185,7 @@ the right of selection end.
 - [ ] `<a-&>`: copy indent, copy the indentation of the main selection
       (or the count one if a count is given) to all other ones
 
-- [ ] ``````````````````````: to lower case
-
-                                                                                  ```
-                                                                              ````
-
-                                                                          `````
-
-                                                                      ``````
-
-                                                                  ```````
-
-                                                              ````````
-
-                                                          `````````
-
-                                                      ``````````
-
-                                                  ```````````
-
-                                              ````````````
-
-                                          `````````````
-
-                                      ``````````````
-
-                                  ```````````````
-
-                              ````````````````
-
-                          `````````````````
-
-                      ``````````````````
-
-                  ```````````````````
-
-              ````````````````````
-
-          `````````````````````
-
-      ``````````````````````
+- [ ] `\``: to lower case
 
 - [ ] `~`: to upper case
 - [ ] `` <a-`> ``: swap case

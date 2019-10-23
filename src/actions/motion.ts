@@ -479,12 +479,9 @@ export class MoveLeft extends BaseMovement {
   keys = ['h'];
 
   public async execAction(position: Position, vimState: VimState): Promise<Position> {
-    if (shouldWrapKey(vimState, this.keysPressed)) {
-      let pos = position.getLeftThroughLineBreaks();
-      vimState.cursorStartPosition = pos;
-      return pos;
-    }
-    return position.getLeft();
+    let pos = position.getLeftThroughLineBreaks();
+    vimState.cursorStartPosition = pos;
+    return pos;
   }
 }
 
@@ -542,14 +539,9 @@ class MoveRight extends BaseMovement {
   keys = ['l'];
 
   public async execAction(position: Position, vimState: VimState): Promise<Position> {
-    if (shouldWrapKey(vimState, this.keysPressed)) {
-      const includeEol =
-        vimState.currentMode === ModeName.Insert || vimState.currentMode === ModeName.KakNormal;
-      const pos = position.getRightThroughLineBreaks(includeEol);
-      vimState.cursorStartPosition = pos;
-      return pos;
-    }
-    return position.getRight();
+    const pos = position.getRightThroughLineBreaks(true);
+    vimState.cursorStartPosition = pos;
+    return pos;
   }
 }
 
@@ -565,13 +557,20 @@ class MoveRightExtend extends BaseMovement {
 
 @RegisterAction
 class MoveRightArrow extends MoveRight {
-  modes = [ModeName.Normal, ModeName.Visual, ModeName.VisualLine, ModeName.VisualBlock];
+  modes = [
+    ModeName.Normal,
+    ModeName.KakNormal,
+    ModeName.Visual,
+    ModeName.VisualLine,
+    ModeName.VisualBlock,
+  ];
   keys = ['<right>'];
 }
 
 @RegisterAction
 class MoveRightArrowExtend extends MoveRightExtend {
-  keys = ['<right>'];
+  modes = [ModeName.KakNormal];
+  keys = ['<shift+right>'];
 }
 
 @RegisterAction
@@ -793,6 +792,7 @@ class MoveTilBackward extends BaseMovement {
 
 @RegisterAction
 class MoveRepeat extends BaseMovement {
+  modes = [];
   keys = [';'];
 
   public async execActionWithCount(
@@ -1255,6 +1255,7 @@ class MoveFullWordBegin extends BaseMovement {
 
 @RegisterAction
 class MoveWordEnd extends BaseMovement {
+  modes = [];
   keys = ['e'];
 
   public async execAction(position: Position, vimState: VimState): Promise<Position> {
@@ -1301,6 +1302,7 @@ class MoveLastFullWordEnd extends BaseMovement {
 
 @RegisterAction
 class MoveBeginningWord extends BaseMovement {
+  modes = [];
   keys = ['b'];
 
   public async execAction(position: Position, vimState: VimState): Promise<Position> {
