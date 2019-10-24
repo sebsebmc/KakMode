@@ -24,7 +24,7 @@ import { Clipboard } from '../../util/clipboard';
 
 @RegisterAction
 class CommandEscInsertMode extends BaseCommand {
-  modes = [ModeName.Insert];
+  modes = [ModeName.Insert, ModeName.KakInsert];
   keys = [['<Esc>'], ['<C-c>'], ['<C-[>']];
 
   runsOnceForEveryCursor() {
@@ -59,7 +59,11 @@ class CommandEscInsertMode extends BaseCommand {
         );
       }
     }
-    await vimState.setCurrentMode(ModeName.Normal);
+    if (vimState.currentMode === ModeName.Insert) {
+      await vimState.setCurrentMode(ModeName.Normal);
+    } else {
+      await vimState.setCurrentMode(ModeName.KakNormal);
+    }
 
     // If we wanted to repeat this insert (only for i and a), now is the time to do it. Insert
     // count amount of these strings before returning back to normal mode
@@ -232,7 +236,7 @@ class CommandInsertIndentInCurrentLine extends BaseCommand {
 
 @RegisterAction
 export class CommandInsertInInsertMode extends BaseCommand {
-  modes = [ModeName.Insert];
+  modes = [ModeName.Insert, ModeName.KakInsert];
   keys = ['<character>'];
 
   public async exec(position: Position, vimState: VimState): Promise<VimState> {

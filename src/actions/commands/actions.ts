@@ -841,22 +841,22 @@ export class CommandKakInsertAtCursor extends BaseCommand {
     return vimState;
   }
 
-  public doesActionApply(vimState: VimState, keysPressed: string[]): boolean {
-    // Only allow this command to be prefixed with a count or nothing, no other
-    // actions or operators before
-    let previousActionsNumbers = true;
-    for (const prevAction of vimState.recordedState.actionsRun) {
-      if (!(prevAction instanceof CommandNumber)) {
-        previousActionsNumbers = false;
-        break;
-      }
-    }
+  // public doesActionApply(vimState: VimState, keysPressed: string[]): boolean {
+  //   // Only allow this command to be prefixed with a count or nothing, no other
+  //   // actions or operators before
+  //   let previousActionsNumbers = true;
+  //   for (const prevAction of vimState.recordedState.actionsRun) {
+  //     if (!(prevAction instanceof CommandNumber)) {
+  //       previousActionsNumbers = false;
+  //       break;
+  //     }
+  //   }
 
-    if (vimState.recordedState.actionsRun.length === 0 || previousActionsNumbers) {
-      return super.couldActionApply(vimState, keysPressed);
-    }
-    return false;
-  }
+  //   if (vimState.recordedState.actionsRun.length === 0 || previousActionsNumbers) {
+  //     return super.couldActionApply(vimState, keysPressed);
+  //   }
+  //   return false;
+  // }
 }
 
 @RegisterAction
