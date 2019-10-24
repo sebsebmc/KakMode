@@ -661,20 +661,15 @@ class MoveFindForward extends BaseMovement {
     const toFind = Notation.ToControlCharacter(this.keysPressed[1]);
     let result = position.findForwards(toFind, count);
 
+    vimState.lastSemicolonRepeatableMovement = new MoveFindForward(this.keysPressed, true);
+    vimState.lastCommaRepeatableMovement = new MoveFindBackward(this.keysPressed, true);
+
     if (!result) {
       return { start: position, stop: position, failed: true };
     }
 
     if (vimState.recordedState.operator) {
       result = result.getRight();
-    }
-
-    if (
-      !this.isRepeat &&
-      (!vimState.recordedState.operator || !(isIMovement(result) && result.failed))
-    ) {
-      vimState.lastSemicolonRepeatableMovement = new MoveFindForward(this.keysPressed, true);
-      vimState.lastCommaRepeatableMovement = new MoveFindBackward(this.keysPressed, true);
     }
 
     return result;
@@ -702,16 +697,11 @@ class MoveFindBackward extends BaseMovement {
     const toFind = Notation.ToControlCharacter(this.keysPressed[1]);
     let result = position.findBackwards(toFind, count);
 
+    vimState.lastSemicolonRepeatableMovement = new MoveFindBackward(this.keysPressed, true);
+    vimState.lastCommaRepeatableMovement = new MoveFindForward(this.keysPressed, true);
+
     if (!result) {
       return { start: position, stop: position, failed: true };
-    }
-
-    if (
-      !this.isRepeat &&
-      (!vimState.recordedState.operator || !(isIMovement(result) && result.failed))
-    ) {
-      vimState.lastSemicolonRepeatableMovement = new MoveFindBackward(this.keysPressed, true);
-      vimState.lastCommaRepeatableMovement = new MoveFindForward(this.keysPressed, true);
     }
 
     return result;
@@ -736,20 +726,15 @@ class MoveTilForward extends BaseMovement {
       result = position.tilForwards(toFind, 2);
     }
 
+    vimState.lastSemicolonRepeatableMovement = new MoveTilForward(this.keysPressed, true);
+    vimState.lastCommaRepeatableMovement = new MoveTilBackward(this.keysPressed, true);
+
     if (!result) {
       return { start: position, stop: position, failed: true };
     }
 
     if (vimState.recordedState.operator) {
       result = result.getRight();
-    }
-
-    if (
-      !this.isRepeat &&
-      (!vimState.recordedState.operator || !(isIMovement(result) && result.failed))
-    ) {
-      vimState.lastSemicolonRepeatableMovement = new MoveTilForward(this.keysPressed, true);
-      vimState.lastCommaRepeatableMovement = new MoveTilBackward(this.keysPressed, true);
     }
 
     return result;
@@ -774,16 +759,11 @@ class MoveTilBackward extends BaseMovement {
       result = position.tilBackwards(toFind, 2);
     }
 
+    vimState.lastSemicolonRepeatableMovement = new MoveTilBackward(this.keysPressed, true);
+    vimState.lastCommaRepeatableMovement = new MoveTilForward(this.keysPressed, true);
+
     if (!result) {
       return { start: position, stop: position, failed: true };
-    }
-
-    if (
-      !this.isRepeat &&
-      (!vimState.recordedState.operator || !(isIMovement(result) && result.failed))
-    ) {
-      vimState.lastSemicolonRepeatableMovement = new MoveTilBackward(this.keysPressed, true);
-      vimState.lastCommaRepeatableMovement = new MoveTilForward(this.keysPressed, true);
     }
 
     return result;
