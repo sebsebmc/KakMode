@@ -57,8 +57,8 @@ See [Appending](#Appending) below for instructions on extending (appending to) t
 - [x] `e`: select preceding whitespaces and the word on the right of selection end (see TODO)
 - [ ] `<a-[wbe]>`: same as [wbe] but select WORD instead of word
 
-- [ ] `f`: select to (including) the next occurrence of the given character (TODO: should wrap past lines)
-- [ ] `t`: select until (excluding) the next occurrence of the given character
+- [x] `f`: select to (including) the next occurrence of the given character (TODO: should wrap past lines)
+- [x] `t`: select until (excluding) the next occurrence of the given character
 - [ ] `<a-[ft]>`: same as [ft] but in the other direction
 
 - [ ] `m`: select to matching character

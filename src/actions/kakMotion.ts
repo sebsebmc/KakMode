@@ -18,6 +18,9 @@ export class MoveWordBegin extends BaseMovement {
   ): Promise<Position | IMovement> {
     // TODO: we want to stop before the newline char to match kakoune behaviour exactly
     position = position.getRightThroughLineBreaks();
+    while (position.isLineEnd() && !position.isAtDocumentEnd()) {
+      position = position.getRightThroughLineBreaks(true);
+    }
     // use getLeftThroughLineBreaks to back up to the previous line
     return { start: position, stop: position.getWordRight().getLeftThroughLineBreaks() };
   }
@@ -53,6 +56,9 @@ export class MoveWordBack extends BaseMovement {
   ): Promise<Position | IMovement> {
     // TODO: skip through line breaks ('w' also needs this fix)
     position = position.getLeftThroughLineBreaks();
+    while (position.isLineEnd() && !position.isAtDocumentBegin()) {
+      position = position.getLeftThroughLineBreaks();
+    }
     // use getLeftThroughLineBreaks to back up to the previous line
     return { start: position, stop: position.getWordLeft() };
   }
@@ -71,6 +77,9 @@ export class MoveWordBackExtend extends BaseMovement {
   ): Promise<Position | IMovement> {
     // TODO: skip through line breaks ('w' also needs this fix)
     position = position.getLeftThroughLineBreaks();
+    while (position.isLineEnd() && !position.isAtDocumentBegin()) {
+      position = position.getLeftThroughLineBreaks();
+    }
     // use getLeftThroughLineBreaks to back up to the previous line
     return position.getWordLeft();
   }

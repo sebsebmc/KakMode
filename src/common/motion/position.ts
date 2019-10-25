@@ -1299,20 +1299,36 @@ export class Position extends vscode.Position {
 
   private findHelper(char: string, count: number, direction: number): Position | undefined {
     // -1 = backwards, +1 = forwards
-    const line = TextEditor.getLineAt(this);
+    let line = TextEditor.getLineAt(this);
+    let lineNum = this.line;
     let index = this.character;
 
+    while (count) {
     while (count && index !== -1) {
       if (direction > 0) {
         index = line.text.indexOf(char, index + direction);
       } else {
         index = line.text.lastIndexOf(char, index + direction);
       }
+        // Do we need to go to the next line?
+        if (index === -1 && count > 0) {
+          if (lineNum < TextEditor.getLineCount() - 1) {
+            lineNum++;
+            line = TextEditor.getLineAt(new Position(lineNum, 0));
+            index = 0;
+          } else {
+            // Gross way to break out of the next loop too
+            count = 0;
+            break;
+          }
+        } else {
       count--;
+    }
+      }
     }
 
     if (index > -1) {
-      return new Position(this.line, index);
+      return new Position(lineNum, index);
     }
 
     return undefined;
@@ -1324,7 +1340,7 @@ export class Position extends vscode.Position {
       return null;
     }
 
-    return new Position(this.line, position.character - 1);
+    return new Position(position.line, position.character - 1);
   }
 
   public tilBackwards(char: string, count: number = 1): Position | null {
@@ -1333,7 +1349,7 @@ export class Position extends vscode.Position {
       return null;
     }
 
-    return new Position(this.line, position.character + 1);
+    return new Position(position.line, position.character + 1);
   }
 
   public findForwards(char: string, count: number = 1): Position | null {
@@ -1342,7 +1358,7 @@ export class Position extends vscode.Position {
       return null;
     }
 
-    return new Position(this.line, position.character);
+    return position;
   }
 
   public findBackwards(char: string, count: number = 1): Position | null {
