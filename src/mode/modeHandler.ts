@@ -1267,6 +1267,7 @@ export class ModeHandler implements vscode.Disposable {
         // MultiCursor mode is active.
         selections = [];
         switch (selectionMode) {
+          case ModeName.KakNormal:
           case ModeName.Visual: {
             for (let { start: cursorStart, stop: cursorStop } of vimState.cursors) {
               if (cursorStart.compareTo(cursorStop) > 0) {
@@ -1278,6 +1279,7 @@ export class ModeHandler implements vscode.Disposable {
             break;
           }
           case ModeName.Normal:
+          case ModeName.KakInsert:
           case ModeName.Insert: {
             for (const { stop: cursorStop } of vimState.cursors) {
               selections.push(new vscode.Selection(cursorStop, cursorStop));

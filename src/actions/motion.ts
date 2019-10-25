@@ -1216,6 +1216,7 @@ export class MoveWordBegin extends BaseMovement {
 
 @RegisterAction
 class MoveFullWordBegin extends BaseMovement {
+  modes = [];
   keys = ['W'];
 
   public async execAction(position: Position, vimState: VimState): Promise<Position> {

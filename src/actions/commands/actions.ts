@@ -818,6 +818,9 @@ export class CommandKakInsertAtCursor extends BaseCommand {
 
   public async exec(position: Position, vimState: VimState): Promise<VimState> {
     await vimState.setCurrentMode(ModeName.KakInsert);
+
+    vimState.cursorStopPosition = vimState.cursorStartPosition;
+
     return vimState;
   }
 

@@ -17,12 +17,13 @@ export class MoveWordBegin extends BaseMovement {
     isLastIteration: boolean = false
   ): Promise<Position | IMovement> {
     // TODO: we want to stop before the newline char to match kakoune behaviour exactly
+    // Skip past newlines
     position = position.getRightThroughLineBreaks();
     while (position.isLineEnd() && !position.isAtDocumentEnd()) {
       position = position.getRightThroughLineBreaks(true);
     }
     // use getLeftThroughLineBreaks to back up to the previous line
-    return { start: position, stop: position.getWordRight().getLeftThroughLineBreaks() };
+    return { start: position, stop: position.getWordRight().getLeftThroughLineBreaks(false) };
   }
 }
 
@@ -30,7 +31,6 @@ export class MoveWordBegin extends BaseMovement {
 export class ExtendWordBegin extends MoveWordBegin {
   modes = [ModeName.KakNormal];
   keys = ['W'];
-  kakModeExtends = true;
 
   // Select the word and following whitespaces on the right of selection end (does not go past newline)
   // We include the character we are on unless we are at the end of a line
@@ -39,7 +39,12 @@ export class ExtendWordBegin extends MoveWordBegin {
     vimState: VimState,
     isLastIteration: boolean = false
   ): Promise<Position> {
-    return position.getWordRight().getLeft();
+    position = position.getRightThroughLineBreaks();
+    while (position.isLineEnd() && !position.isAtDocumentEnd()) {
+      position = position.getRightThroughLineBreaks(true);
+    }
+    // use getLeftThroughLineBreaks to back up to the previous line
+    return position.getWordRight(true).getLeftThroughLineBreaks();
   }
 }
 
@@ -155,7 +160,7 @@ export class SelectLine extends BaseMovement {
     vimState: VimState,
     isLastIteration: boolean = false
   ): Promise<IMovement> {
-    if (position.isLineEnd()) {
+    if (vimState.cursorStartPosition.isLineBeginning() && vimState.cursorStopPosition.isLineEnd()) {
       position = position.getNextLineBegin();
     }
     return { start: position.getLineBegin(), stop: position.getLineEndIncludingEOL() };
@@ -171,11 +176,18 @@ export class SelectLineExtend extends BaseMovement {
     position: Position,
     vimState: VimState,
     isLastIteration: boolean = false
-  ): Promise<Position> {
-    if (position.isLineEnd()) {
+  ): Promise<IMovement> {
+    if (vimState.cursorStopPosition.isLineEnd()) {
       position = position.getNextLineBegin();
     }
-    return position.getLineEndIncludingEOL();
+    if (vimState.cursorStartPosition.line === position.line) {
+      return {
+        start: vimState.cursorStartPosition.getLineBegin(),
+        stop: position.getLineEndIncludingEOL(),
+      };
+    } else {
+      return { start: vimState.cursorStartPosition, stop: position.getLineEndIncludingEOL() };
+    }
   }
 }
 

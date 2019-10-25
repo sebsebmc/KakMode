@@ -21,8 +21,8 @@ or the selected text.
 When entering insert mode, keys are now directly inserted before each
 selection's cursor. Some additional keys are recognised in insert mode:
 
-- [ ] `<esc>`: leave insert mode
-- [ ] `<backspace>`: delete characters before cursors
+- [x] `<esc>`: leave insert mode
+- [x] `<backspace>`: delete characters before cursors
 - [ ] `<del>`: delete characters under cursors
 - [ ] `<left> <right>, <up>, <down>`: move the cursors in given direction (TODO: fix switching in and out of SHIFT variants, hjlk version works correctly)
 - [ ] `<home>`: move cursors to line begin
@@ -124,7 +124,7 @@ the right of selection end.
 
 ## Changes
 
-- [ ] `i`: enter insert mode before current selection
+- [x] `i`: enter insert mode before current selection
 - [ ] `a`: enter insert mode after current selection
 - [ ] `d`: yank and delete current selection
 - [ ] `c`: yank and delete current selection and enter insert mode
