@@ -25,8 +25,8 @@ selection's cursor. Some additional keys are recognised in insert mode:
 - [x] `<backspace>`: delete characters before cursors
 - [ ] `<del>`: delete characters under cursors
 - [ ] `<left> <right>, <up>, <down>`: move the cursors in given direction (TODO: fix switching in and out of SHIFT variants, hjlk version works correctly)
-- [ ] `<home>`: move cursors to line begin
-- [ ] `<end>`: move cursors to end of line
+- [x] `<home>`: move cursors to line begin
+- [x] `<end>`: move cursors to end of line
 
 ### These may be implemented completely differently because of Code's UI
 

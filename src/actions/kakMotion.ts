@@ -191,6 +191,46 @@ export class SelectLineExtend extends BaseMovement {
   }
 }
 
+@RegisterAction
+class SelectLineBegin extends BaseMovement {
+  modes = [ModeName.KakNormal];
+  keys = ['<a-h>'];
+
+  public async execAction(position: Position, vimState: VimState): Promise<Position> {
+    return position.getLineBegin();
+  }
+}
+
+@RegisterAction
+class MoveLineBegin extends BaseMovement {
+  modes = [ModeName.KakInsert];
+  keys = ['<Home>'];
+
+  public async execAction(position: Position, vimState: VimState): Promise<Position> {
+    return position.getLineBegin();
+  }
+}
+
+@RegisterAction
+class SelectLineEnd extends BaseMovement {
+  modes = [ModeName.KakNormal];
+  keys = ['<a-l>'];
+
+  public async execAction(position: Position, vimState: VimState): Promise<Position> {
+    return position.getLineEnd();
+  }
+}
+
+@RegisterAction
+class MoveLineEnd extends BaseMovement {
+  modes = [ModeName.KakInsert];
+  keys = ['<End>'];
+
+  public async execAction(position: Position, vimState: VimState): Promise<Position> {
+    return position.getLineEnd();
+  }
+}
+
 // @RegisterAction
 // export class name extends BaseMovement {
 //   modes = [ModeName.KakNormal];

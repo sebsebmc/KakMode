@@ -1386,7 +1386,13 @@ class CommandSearchVisualBackward extends BaseCommand {
 
 @RegisterAction
 export class CommandSearchForwards extends BaseCommand {
-  modes = [ModeName.Normal, ModeName.Visual, ModeName.VisualLine, ModeName.VisualBlock];
+  modes = [
+    ModeName.Normal,
+    ModeName.KakNormal,
+    ModeName.Visual,
+    ModeName.VisualLine,
+    ModeName.VisualBlock,
+  ];
   keys = ['/'];
   isMotion = true;
   isJump = true;

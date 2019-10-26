@@ -7,7 +7,7 @@ import './textobject';
 // commands
 import './commands/insert';
 import './commands/actions';
-import './commands/kaknormal';
+// import './commands/kaknormal';
 
 // plugin
 import './plugins/camelCaseMotion';
