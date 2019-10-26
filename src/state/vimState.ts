@@ -33,6 +33,8 @@ export class VimState implements vscode.Disposable {
    * will be 20, even if you press j and the next column is only 5 characters.
    * This is because if the third column is 25 characters, the cursor will go
    * back to the 20th column.
+   *
+   * TODO: Replace with a Range to handle moving selections up/down
    */
   public desiredColumn = 0;
 
@@ -242,8 +244,6 @@ export class VimState implements vscode.Disposable {
     this.editor = editor;
     this.identity = new EditorIdentity(editor);
     this.historyTracker = new HistoryTracker(this);
-    this.easyMotion = new EasyMotion();
-    this.nvim = new NeovimWrapper();
     this._inputMethodSwitcher = new InputMethodSwitcher();
   }
 

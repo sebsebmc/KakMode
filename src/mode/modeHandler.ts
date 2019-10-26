@@ -683,20 +683,15 @@ export class ModeHandler implements vscode.Disposable {
        * out non-Kakoune features
        */
       let cursorPosition = vimState.cursors[i].stop;
-      const cursorStartPosition = vimState.cursors[i].start;
       const old = vimState.cursorStopPosition;
-      const oldStart = vimState.cursorStartPosition;
 
       vimState.cursorStopPosition = cursorPosition;
-      vimState.cursorStartPosition = cursorStartPosition;
       const result = await movement.execActionWithCount(
         cursorPosition,
         vimState,
         recordedState.count
       );
-      const newStart = vimState.cursorStartPosition;
       vimState.cursorStopPosition = old;
-      vimState.cursorStartPosition = oldStart;
 
       if (result instanceof Position) {
         vimState.cursors[i] = vimState.cursors[i].withNewStop(result);
@@ -704,9 +699,9 @@ export class ModeHandler implements vscode.Disposable {
         if (!this.currentMode.isVisualMode && !vimState.recordedState.operator) {
           vimState.cursors[i] = vimState.cursors[i].withNewStart(result);
         }
-        if (vimState.currentMode === ModeName.KakNormal) {
-          vimState.cursors[i] = vimState.cursors[i].withNewStart(newStart);
-        }
+        // if (vimState.currentMode === ModeName.KakNormal) {
+        //   vimState.cursors[i] = vimState.cursors[i].withNewStart(newStart);
+        // }
       } else if (isIMovement(result)) {
         if (result.failed) {
           vimState.recordedState = new RecordedState();
@@ -1211,7 +1206,7 @@ export class ModeHandler implements vscode.Disposable {
         let start = vimState.cursorStartPosition;
         let stop = vimState.cursorStopPosition;
 
-        if (selectionMode === ModeName.Visual || selectionMode === ModeName.KakNormal) {
+        if (selectionMode === ModeName.Visual) {
           /**
            * Always select the letter that we started visual mode on, no matter
            * if we are in front or behind it. Imagine that we started visual mode
@@ -1228,6 +1223,8 @@ export class ModeHandler implements vscode.Disposable {
             start = start.getRightThroughLineBreaks();
           }
 
+          selections = [new vscode.Selection(start, stop)];
+        } else if (selectionMode === ModeName.KakNormal) {
           selections = [new vscode.Selection(start, stop)];
         } else if (selectionMode === ModeName.VisualLine) {
           selections = [
