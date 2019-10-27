@@ -36,7 +36,7 @@ export class InsertMode extends Mode {
 
 export class KakNormalMode extends Mode {
   constructor() {
-    super(ModeName.KakNormal, '-- KakNormal --', VSCodeVimCursorType.Native, true);
+    super(ModeName.KakNormal, '-- KakNormal --', VSCodeVimCursorType.Block, true);
   }
 
   getStatusBarCommandText(vimState: VimState): string {

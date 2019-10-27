@@ -843,17 +843,6 @@ export class CommandKakInsertAtCursor extends BaseCommand {
 }
 
 @RegisterAction
-export class CommandKakInsertAtSelEnd extends BaseCommand {
-  modes = [ModeName.KakNormal];
-  keys = ['a'];
-
-  public async exec(position: Position, vimState: VimState): Promise<VimState> {
-    await vimState.setCurrentMode(ModeName.KakInsert);
-    return vimState;
-  }
-}
-
-@RegisterAction
 class CommandReplaceAtCursorFromNormalMode extends BaseCommand {
   modes = [ModeName.Normal];
   keys = ['R'];
