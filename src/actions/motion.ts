@@ -223,8 +223,10 @@ class MoveDown extends BaseMovement {
     } else {
       pos = position.getDown(vimState.desiredColumn);
     }
-    vimState.cursorStartPosition = pos;
-    return pos;
+    return {
+      start: position.getDown(vimState.desiredColumn),
+      stop: position.getDown(vimState.desiredColumn + 1),
+    };
   }
 
   public async execActionForOperator(position: Position, vimState: VimState): Promise<Position> {
@@ -242,6 +244,10 @@ class MoveDownExtend extends BaseMovement {
   public async execAction(position: Position, vimState: VimState): Promise<Position | IMovement> {
     if (configuration.foldfix && vimState.currentMode !== ModeName.VisualBlock) {
       return new MoveDownFoldFix().execAction(position, vimState);
+    }
+    if (vimState.cursorStopPosition.isAfter(vimState.cursorStartPosition)) {
+      // This isn't the actual fix. We need to change the start itself
+      position = vimState.cursorStartPosition;
     }
     return position.getDown(vimState.desiredColumn);
   }
@@ -274,8 +280,11 @@ class MoveUp extends BaseMovement {
     } else {
       pos = position.getUp(vimState.desiredColumn);
     }
-    vimState.cursorStartPosition = pos;
-    return pos;
+
+    return {
+      start: position.getUp(vimState.desiredColumn),
+      stop: position.getUp(vimState.desiredColumn + 1),
+    };
   }
 
   public async execActionForOperator(position: Position, vimState: VimState): Promise<Position> {
@@ -339,54 +348,54 @@ class MoveUpArrowExtend extends MoveUpExtend {
   keys = ['<shift+up>'];
 }
 
-@RegisterAction
-class ArrowsInReplaceMode extends BaseMovement {
-  modes = [ModeName.Replace];
-  keys = [['<up>'], ['<down>'], ['<left>'], ['<right>']];
+// @RegisterAction
+// class ArrowsInReplaceMode extends BaseMovement {
+//   modes = [ModeName.Replace];
+//   keys = [['<up>'], ['<down>'], ['<left>'], ['<right>']];
 
-  public async execAction(position: Position, vimState: VimState): Promise<Position> {
-    let newPosition: Position = position;
+//   public async execAction(position: Position, vimState: VimState): Promise<Position> {
+//     let newPosition: Position = position;
 
-    switch (this.keysPressed[0]) {
-      case '<up>':
-        newPosition = <Position>await new MoveUpArrow().execAction(position, vimState);
-        break;
-      case '<down>':
-        newPosition = <Position>await new MoveDownArrow().execAction(position, vimState);
-        break;
-      case '<left>':
-        newPosition = await new MoveLeftArrow().execAction(position, vimState);
-        break;
-      case '<right>':
-        newPosition = await new MoveRightArrow().execAction(position, vimState);
-        break;
-      default:
-        break;
-    }
-    vimState.replaceState = new ReplaceState(newPosition);
-    return newPosition;
-  }
-}
+//     switch (this.keysPressed[0]) {
+//       case '<up>':
+//         newPosition = <Position>await new MoveUpArrow().execAction(position, vimState);
+//         break;
+//       case '<down>':
+//         newPosition = <Position>await new MoveDownArrow().execAction(position, vimState);
+//         break;
+//       case '<left>':
+//         newPosition = <Position>await new MoveLeftArrow().execAction(position, vimState);
+//         break;
+//       case '<right>':
+//         newPosition = <Position>await new MoveRightArrow().execAction(position, vimState);
+//         break;
+//       default:
+//         break;
+//     }
+//     vimState.replaceState = new ReplaceState(newPosition);
+//     return newPosition;
+//   }
+// }
 
-@RegisterAction
-class UpArrowInReplaceMode extends ArrowsInReplaceMode {
-  keys = [['<up>']];
-}
+// @RegisterAction
+// class UpArrowInReplaceMode extends ArrowsInReplaceMode {
+//   keys = [['<up>']];
+// }
 
-@RegisterAction
-class DownArrowInReplaceMode extends ArrowsInReplaceMode {
-  keys = [['<down>']];
-}
+// @RegisterAction
+// class DownArrowInReplaceMode extends ArrowsInReplaceMode {
+//   keys = [['<down>']];
+// }
 
-@RegisterAction
-class LeftArrowInReplaceMode extends ArrowsInReplaceMode {
-  keys = [['<left>']];
-}
+// @RegisterAction
+// class LeftArrowInReplaceMode extends ArrowsInReplaceMode {
+//   keys = [['<left>']];
+// }
 
-@RegisterAction
-class RightArrowInReplaceMode extends ArrowsInReplaceMode {
-  keys = [['<right>']];
-}
+// @RegisterAction
+// class RightArrowInReplaceMode extends ArrowsInReplaceMode {
+//   keys = [['<right>']];
+// }
 
 @RegisterAction
 class CommandNextSearchMatch extends BaseMovement {
@@ -478,10 +487,13 @@ export class MarkMovement extends BaseMovement {
 export class MoveLeft extends BaseMovement {
   keys = ['h'];
 
-  public async execAction(position: Position, vimState: VimState): Promise<Position> {
-    let pos = position.getLeftThroughLineBreaks();
-    vimState.cursorStartPosition = pos;
-    return pos;
+  public async execAction(position: Position, vimState: VimState): Promise<Position | IMovement> {
+    // If we flip the selection direction we need to move one extra to the left
+    if (vimState.cursorStartPosition.isBefore(vimState.cursorStopPosition)) {
+      position = position.getLeftThroughLineBreaks(true);
+    }
+    const pos = position.getLeftThroughLineBreaks(true);
+    return { start: position, stop: pos };
   }
 }
 
@@ -538,10 +550,13 @@ class BackSpaceInVisualMode extends BaseMovement {
 class MoveRight extends BaseMovement {
   keys = ['l'];
 
-  public async execAction(position: Position, vimState: VimState): Promise<Position> {
+  public async execAction(position: Position, vimState: VimState): Promise<Position | IMovement> {
+    // If we flip the selection direction we need to move one extra to the right
+    if (vimState.cursorStartPosition.isAfter(vimState.cursorStopPosition)) {
+      position = position.getRightThroughLineBreaks(true);
+    }
     const pos = position.getRightThroughLineBreaks(true);
-    vimState.cursorStartPosition = pos;
-    return pos;
+    return { start: position, stop: pos };
   }
 }
 
@@ -1962,10 +1977,14 @@ export class ArrowsInInsertMode extends BaseMovement {
         newPosition = <Position>await new MoveDownArrow().execAction(position, vimState);
         break;
       case '<left>':
-        newPosition = await new MoveLeftArrow(this.keysPressed).execAction(position, vimState);
+        newPosition = <Position>(
+          await new MoveLeftArrow(this.keysPressed).execAction(position, vimState)
+        );
         break;
       case '<right>':
-        newPosition = await new MoveRightArrow(this.keysPressed).execAction(position, vimState);
+        newPosition = <Position>(
+          await new MoveRightArrow(this.keysPressed).execAction(position, vimState)
+        );
         break;
       default:
         break;
